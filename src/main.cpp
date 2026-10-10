@@ -7,7 +7,10 @@ class robot {
         std::string name;
         int battery;
     public:
-        robot(std::string robot_name, int robot_battery) : name(robot_name), battery (robot_battery) {}
+        robot(std::string robot_name, int robot_battery) {
+            name = robot_name;
+            battery = robot_battery;
+        }
 
         void display() {
             std::cout << "My name is " << name << " and my battery level is " << battery << std::endl;
