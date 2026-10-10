@@ -1,43 +1,5 @@
 #include <iostream>
-#include <string>
-
-
-class robot {
-    private:
-        std::string name;
-        int battery;
-    public:
-        robot(std::string robot_name, int robot_battery) {
-            name = robot_name;
-            battery = robot_battery;
-        }
-    
-        void setName(std::string robot_name) {
-            name = robot_name;
-        }
-
-        std::string getName() {
-            return name;
-        }
-
-        void setBattery(int level) {
-            if (level >= 0 && level <= 100) {
-                battery = level;
-            }
-            else {
-                std::cout << "Battery level must be between 0 and 100." << std::endl;
-            }
-        }
-
-        int getBattery() {
-            return battery;
-        }
-
-
-        void display() {
-            std::cout << "My name is " << name << " and my battery level is " << battery << std::endl;
-        }
-};
+#include "robot.hpp"
 
 int main () {
     robot robot1 ("Abinara", 100);
