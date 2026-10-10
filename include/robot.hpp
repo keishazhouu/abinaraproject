@@ -1,6 +1,6 @@
 #ifndef ROBOT_HPP
 #define ROBOT_HPP
-#include <string.h>
+#include <string>
 
 class robot {
     private:
