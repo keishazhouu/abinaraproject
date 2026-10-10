@@ -1,6 +1,7 @@
 #include <iostream>
 #include "robot.hpp"
 #include "robot_sar.hpp"
+#include "robot_delivery.hpp"
 
 int main () {
     robot robot1 ("Abinara", 100);
@@ -15,10 +16,14 @@ int main () {
 
     std::cout << robot1.getName() << "'s battery level is " << robot1.getBattery() << std::endl;
 
-    robot_sar robot_sar1 ("ITS Helper", 100, 0);
+    robot_sar robot_sar1 ("ITS Helper", 100, 0); 
     robot_sar1.rescue();
     robot_sar1.rescue();
     robot_sar1.display();
+
+    robot_delivery robot_delivery1 ("Carrier", 100, 10);
+    robot_delivery1.weight(40); //turn the total weight to 50 kg
+    robot_delivery1.display();
 
     return 0;
 }

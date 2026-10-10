@@ -30,3 +30,5 @@ int robot::getBattery() {
 void robot::display() {
     std::cout << "My name is " << name << " and my battery level is " << battery << std::endl;
 }
+
+robot::~robot() {}

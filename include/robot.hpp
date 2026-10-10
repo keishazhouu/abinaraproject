@@ -8,11 +8,12 @@ class robot {
         int battery;
     public:
         robot(std::string robot_name, int robot_battery);
+        virtual ~robot();
         void setName(std::string robot_name);
         std::string getName();
         void setBattery (int level);
         int getBattery();
-        void display();
+        virtual void display();
 };
 
 #endif

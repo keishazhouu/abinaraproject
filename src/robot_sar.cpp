@@ -15,5 +15,5 @@ int robot_sar::getrescue_count() {
 
 void robot_sar::display() {
     robot::display();
-    std::cout << "" << robot::getName() << " have rescued " << rescue_count << " people" << std::endl;
+    std::cout << "" << getName() << " have rescued " << rescue_count << " people" << std::endl;
 }
