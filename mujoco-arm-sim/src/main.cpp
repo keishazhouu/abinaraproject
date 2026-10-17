@@ -21,69 +21,72 @@ void glfw_error_callback(int error, const char* description);
 
 
 int main () {
-    char error[1000] = "Could not load model";
-    m = mj_loadXML("models/arm_final.xml", nullptr, error, sizeof(error));
-    if(!m) {
-        fprintf(stderr, "%s\n", error);
-        return 1;
+char error[1000] = "Could not load model";
+m = mj_loadXML("models/arm_final.xml", nullptr, error, sizeof(error));
+if(!m) {
+fprintf(stderr, "%s\n", error);
+return 1;
     }
 
-    d = mj_makeData(m);
+d = mj_makeData(m);
 
-    glfwSetErrorCallback(glfw_error_callback);
-    if (!glfwInit()) {
-        fprintf(stderr, "Could not initialize GLFW\n");
-        return 1;
+glfwSetErrorCallback(glfw_error_callback);
+if (!glfwInit()) {
+fprintf(stderr, "Could not initialize GLFW\n");
+return 1;
     }
 
-    GLFWwindow* window = glfwCreateWindow(800, 600, "Abinara Arm Simulation", nullptr, nullptr);
-    if (!window) {
-        fprintf(stderr, "Could not create GLFW window\n");
-        glfwTerminate();
-        return 1;
+GLFWwindow* window = glfwCreateWindow(800, 600, "Abinara Arm Simulation", nullptr, nullptr);
+if (!window) {
+fprintf(stderr, "Could not create GLFW window\n");
+glfwTerminate();
+return 1;
     }
 
-    glfwSetMouseButtonCallback(window, mouse_button_callback);
-    glfwSetCursorPosCallback(window, cursor_pos_callback);
-    glfwSetScrollCallback(window, scroll_callback);
-    glfwSetKeyCallback(window, keyboard_callback);
+glfwMakeContextCurrent(window);
+glfwSetMouseButtonCallback(window, mouse_button_callback);
 
-    mjv_defaultCamera(&cam);
-    mjv_defaultOption(&opt);
-    mjv_defaultScene(&scn);
-    mjr_defaultContext(&con);
+glfwSetMouseButtonCallback(window, mouse_button_callback);
+glfwSetCursorPosCallback(window, cursor_pos_callback);
+glfwSetScrollCallback(window, scroll_callback);
+glfwSetKeyCallback(window, keyboard_callback);
 
-    mjv_makeScene(m, &scn, 2000);
-    mjr_makeContext(m, &con, mjFONTSCALE_150);
+mjv_defaultCamera(&cam);
+mjv_defaultOption(&opt);
+mjv_defaultScene(&scn);
+mjr_defaultContext(&con);
 
-    cam.distance = 1.5;
-    cam.azimuth = 90;
-    cam.elevation = -20;
+mjv_makeScene(m, &scn, 2000);
+mjr_makeContext(m, &con, mjFONTSCALE_150);
 
-    while (!glfwWindowShouldClose(window)) {
-        mj_step(m, d);
+cam.distance = 1.5;
+cam.azimuth = 90;
+cam.elevation = -20;
 
-        printf("Joint positions: ");
-            for (int i = 0; i < m->nq; i++) {
-        printf("%.3f ", d->qpos[i]);
+while (!glfwWindowShouldClose(window)) {
+mj_step(m, d);
+
+printf("Joint positions: ");
+for (int i = 0; i < m->nq; i++) {
+printf("%.3f ", d->qpos[i]);
         }
-        printf("\n");
+printf("\n");
 
-        mjrRect viewport = {0, 0, 0, 0};
-        glfwGetFramebufferSize(window, &viewport.width, &viewport.height);
+mjrRect viewport = {0, 0, 0, 0};
+glfwGetFramebufferSize(window, &viewport.width, &viewport.height);
 
-        mjv_updateScene(m, d, &opt, nullptr, &cam, mjCAT_ALL, &scn);
-        mjr_render(viewport, &scn, &con);
+mjv_updateScene(m, d, &opt, nullptr, &cam, mjCAT_ALL, &scn);
+mjr_render(viewport, &scn, &con);
 
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+glfwSwapBuffers(window);
+glfwPollEvents();
     }
 
-    mjv_freeScene(&scn);
-    mjr_freeContext(&con);
-    mj_deleteData(d);
-    mj_deleteModel(m);
-    glfwTerminate();
+mjv_freeScene(&scn);
+mjr_freeContext(&con);
+mj_deleteData(d);
+mj_deleteModel(m);
+glfwTerminate();
 
-    return 0;
-}
+return 0;
+} 

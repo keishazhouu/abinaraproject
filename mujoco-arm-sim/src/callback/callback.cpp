@@ -64,3 +64,7 @@ void mouse_button_callback(GLFWwindow* window, int button, int act, int mods) {
 
     glfwGetCursorPos(window, &lastx, &lasty);
 }
+
+void glfw_error_callback(int error, const char* description) {
+    fprintf (stderr, "Error at number %d. The error is %s", error, description);
+}

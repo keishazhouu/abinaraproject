@@ -4,7 +4,11 @@ project(abinaraproject)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(abinara_sim src/main.cpp)
+add_executable(abinara_sim 
+src/main.cpp
+src/callback/callback.cpp
+src/control/control.cpp
+src/sim/sim.cpp)
 
 target_include_directories(abinara_sim PRIVATE
     "$ENV{HOME}/mujoco/include"
