@@ -4,13 +4,14 @@ project(abinaraproject)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(abinara_sim 
-src/main.cpp
-src/callback/callback.cpp
-src/control/control.cpp
-src/sim/sim.cpp)
+add_executable(abinara_sim
+    src/main.cpp
+    src/callback/callback.cpp
+    src/control/control.cpp
+    src/sim/sim.cpp)
 
 target_include_directories(abinara_sim PRIVATE
+    ${CMAKE_SOURCE_DIR}/src
     "$ENV{HOME}/mujoco/include"
 )
 
@@ -18,7 +19,4 @@ target_link_directories(abinara_sim PRIVATE
     "$ENV{HOME}/mujoco/build/lib"
 )
 
-target_link_libraries(abinara_sim PRIVATE
-    mujoco
-    glfw
-)
+target_link_libraries(abinara_sim PRIVATE mujoco glfw)
