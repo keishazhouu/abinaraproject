@@ -1,0 +1,34 @@
+<launch>
+  <arg name="headless" default="false"/>
+  <arg name="period" default="6.0"/>
+  <arg name="plane" default="xz"/>
+  <arg name="arm2_phase_offset" default="0.0"/>
+
+  <node pkg="kpp_ros_mujoco" type="mujoco_sim_node" name="mujoco_sim" output="screen">
+    <param name="model_path" value="$(find kpp_ros_mujoco)/models/dual_arm.xml"/>
+    <rosparam param="robots">[arm1, arm2]</rosparam>
+    <param name="use_prefix" value="true"/>
+    <param name="cam_distance" value="2.8"/>
+    <param name="headless" value="$(arg headless)"/>
+  </node>
+
+  <node pkg="kpp_ros_mujoco" type="sync_node" name="sync" output="screen">
+    <param name="period" value="$(arg period)"/>
+  </node>
+
+  <group ns="arm1">
+    <node pkg="kpp_ros_mujoco" type="triangle_trajectory_node" name="triangle_trajectory" output="screen">
+      <param name="use_external_phase" value="true"/>
+      <param name="plane" value="$(arg plane)"/>
+      <param name="phase_offset" value="0.0"/>
+    </node>
+  </group>
+
+  <group ns="arm2">
+    <node pkg="kpp_ros_mujoco" type="triangle_trajectory_node" name="triangle_trajectory" output="screen">
+      <param name="use_external_phase" value="true"/>
+      <param name="plane" value="$(arg plane)"/>
+      <param name="phase_offset" value="$(arg arm2_phase_offset)"/>
+    </node>
+  </group>
+</launch>

@@ -1,0 +1,20 @@
+<launch>
+
+  <arg name="headless" default="false"/>
+  <arg name="period" default="6.0"/>
+  <arg name="plane" default="xz"/>
+
+  <node pkg="kpp_ros_mujoco" type="mujoco_sim_node" name="mujoco_sim" output="screen">
+    <param name="model_path" value="$(find kpp_ros_mujoco)/models/arm_final.xml"/>
+    <rosparam param="robots">[arm1]</rosparam>
+    <param name="use_prefix" value="false"/>
+    <param name="headless" value="$(arg headless)"/>
+  </node>
+
+  <group ns="arm1">
+    <node pkg="kpp_ros_mujoco" type="triangle_trajectory_node" name="triangle_trajectory" output="screen">
+      <param name="period" value="$(arg period)"/>
+      <param name="plane" value="$(arg plane)"/>
+    </node>
+  </group>
+</launch>
