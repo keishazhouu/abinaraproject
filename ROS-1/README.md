@@ -173,13 +173,17 @@ rostopic pub -1 /arm2/enable std_msgs/Bool "data: false"
 ## Struktur repo
 
 ```
-kpp_ros_mujoco/
+## Struktur repo
+
+```
+ROS-1/                        (package catkin: kpp_ros_mujoco)
 ├── CMakeLists.txt, package.xml
-├── include/  callback/ control/ sim/ ros_bridge/ kinematics/
-├── src/      callback/ control/ sim/ ros_bridge/ kinematics/
+├── docker/   Dockerfile
+├── include/  sim.hpp  callback.hpp  control.hpp  ros_bridge.hpp  arm_kinematics.hpp
+├── src/      sim.cpp  callback.cpp  control.cpp  ros_bridge.cpp  arm_kinematics.cpp
 │             mujoco_sim_node.cpp  triangle_trajectory_node.cpp  sync_node.cpp
 ├── launch/   single_arm.launch  dual_arm.launch
 ├── models/   arm_final.xml  dual_arm.xml  arm.urdf
-├── scripts/  make_dual_arm.py
+├── scripts/  arm_dual_make.py
+├── docs/     screenshot dan rekaman simulasi
 └── README.md
-```
