@@ -173,9 +173,6 @@ rostopic pub -1 /arm2/enable std_msgs/Bool "data: false"
 ## Struktur repo
 
 ```
-## Struktur repo
-
-```
 ROS-1/                        (package catkin: kpp_ros_mujoco)
 ├── CMakeLists.txt, package.xml
 ├── docker/   Dockerfile
@@ -187,3 +184,4 @@ ROS-1/                        (package catkin: kpp_ros_mujoco)
 ├── scripts/  arm_dual_make.py
 ├── docs/     screenshot dan rekaman simulasi
 └── README.md
+'''
