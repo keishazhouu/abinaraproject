@@ -23,10 +23,11 @@ bool RosBridge::addRobot(const std::string& name, const std::string& prefix) {
         if (r.joint_id[i] < 0 || r.actuator_id[i] < 0) {
             ROS_ERROR("Joint/aktuator '%s' tidak ditemukan di model MuJoCo.", full.c_str());
             return false;
-        }    r.site_id = mj_name2id(m_, mjOBJ_SITE, (prefix + "ee").c_str());
-
+        }
     }
+    r.site_id = mj_name2id(m_, mjOBJ_SITE, (prefix + "ee").c_str());
     r.torso_id = mj_name2id(m_, mjOBJ_BODY, (prefix + "torso").c_str());
+    
     if (r.site_id < 0 || r.torso_id < 0) {
         ROS_ERROR("Site '%see' atau body '%storso' tidak ditemukan di model.", prefix.c_str(), prefix.c_str());
         return false;
