@@ -45,8 +45,8 @@ diidentifikasi serta dikontrol terpisah.
   menyentuh simulator, atau `rostopic pub` menggantikan perencana).
 - **Topic, bukan service.** Data berupa aliran kontinu (100 Hz) dan pengirim tidak perlu menunggu balasan;
   yang berlaku selalu perintah terbaru, yang lama boleh terlewat.
-- **Modul 2 dipertahankan.** `sim/`, `callback/`, dan `control/` dipakai kembali; ROS ditambahkan sebagai satu modul
-  baru (`ros_bridge/`) sehingga kode fisika/viewer tidak tercampur dengan kode komunikasi.
+- **Modul 2 dipertahankan.** `sim.*`, `callback.*`, dan `control.*` dipakai kembali; ROS ditambahkan sebagai satu modul
+  baru (`ros_bridge.*`) sehingga kode fisika/viewer tidak tercampur dengan kode komunikasi.
 - **Satu loop, satu thread.** `ros::spinOnce()` dipanggil di loop utama, jadi callback ROS, fisika, dan render
   berjalan berurutan di satu thread. Tidak ada race condition atau mutex yang perlu dijelaskan.
 - **Namespace per robot** (`/arm1/...`, `/arm2/...`): node yang sama dijalankan dua kali pada namespace berbeda,
@@ -70,7 +70,7 @@ ee = shoulder(0, 0.475) + L1·u(θ1+φ0) + L2·u(θ2) + 0.08·u(θ3),   u(θ) = 
 L1 = hypot(0.0175, 0.275) ≈ 0.2756,  φ0 = atan2(-0.0175, 0.275),  L2 = 0.2
 ```
 
-Inverse kinematics (`src/kinematics/arm_kinematics.cpp`), target `(x, y, z)` + arah gripper (default menghadap ke bawah):
+Inverse kinematics (`src/arm_kinematics.cpp`), target `(x, y, z)` + arah gripper (default menghadap ke bawah):
 
 1. `hip = atan2(y, x)`, `r = hypot(x, y)`
 2. Mundur dari ujung gripper sejauh 0.08 m ke titik wrist, sehingga sisa masalahnya IK 2-link
@@ -93,25 +93,49 @@ sehingga error turun menjadi ±1.3 mm. Dapat dimatikan dengan `gravity_comp:=fal
 | File | Perubahan |
 |---|---|
 | `models/arm_final.xml` | Ditambah 1 baris: `<site name="ee">` di ujung gripper (titik acuan end-effector) |
-| `sim/`, `callback/` | Tidak diubah |
-| `control/` | Ditambah `control_gravity_compensation()` |
+| `sim.*`, `callback.*` | Tidak diubah |
+| `control.*` | Ditambah `control_gravity_compensation()` |
 | `main.cpp` → `mujoco_sim_node.cpp` | Ditambah init ROS, `RosBridge`, `ros::spinOnce()`, dan `sim_advance()` (real-time) menggantikan `mj_step()` per frame |
-| Baru | `ros_bridge/`, `kinematics/`, `triangle_trajectory_node.cpp`, `sync_node.cpp`, launch, `dual_arm.xml` |
+| Baru | `ros_bridge.*`, `arm_kinematics.*`, `triangle_trajectory_node.cpp`, `sync_node.cpp`, launch, `dual_arm.xml` |
 
-`models/dual_arm.xml` dibuat oleh `scripts/make_dual_arm.py` dari `arm_final.xml` (dua salinan, nama diberi prefix
+`models/dual_arm.xml` dibuat oleh `scripts/arm_dual_make.py` dari `arm_final.xml` (dua salinan, nama diberi prefix
 `arm1_`/`arm2_`, base di x = −0.4 dan +0.4).
 
 ## Prasyarat dan build
 
-- Ubuntu 20.04 + ROS Noetic, MuJoCo (versi yang sama dengan Modul 2), `sudo apt install libglfw3-dev`
+- ROS 1 Noetic (resmi hanya di Ubuntu 20.04; di Ubuntu 22.04/24.04 pakai Docker, lihat bagian berikutnya), MuJoCo 3.2.7, `sudo apt install libglfw3-dev`
 - Letakkan MuJoCo di `~/.mujoco/mujoco-x.y.z` atau `export MUJOCO_DIR=/path/ke/mujoco-x.y.z`
 
 ```bash
 mkdir -p ~/catkin_ws/src && cd ~/catkin_ws/src
-git clone <URL-REPO-KAMU> kpp_ros_mujoco
+git clone https://github.com/keishazhouu/abinaraproject.git kpp_ros_mujoco
 cd ~/catkin_ws && catkin_make
 source devel/setup.bash
 ```
+
+## Menjalankan dengan Docker (Ubuntu 22.04/24.04)
+
+Proyek ini diuji di Ubuntu 24.04 memakai container Ubuntu 20.04 + ROS Noetic (MuJoCo 3.2.7 sudah ada di image). Jalankan dari folder `ROS-1`:
+
+```bash
+cd docker && docker build -t kpp-ros .
+xhost +local:docker
+docker run -it --rm --name kpp --net=host \
+  -e DISPLAY=$DISPLAY \
+  -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
+  --device /dev/dri \
+  -v $(pwd)/..:/root/catkin_ws/src/kpp_ros_mujoco \
+  -v kpp_build:/root/catkin_ws/build \
+  -v kpp_devel:/root/catkin_ws/devel \
+  kpp-ros bash
+
+# di dalam container
+cd /root/catkin_ws && catkin_make
+source devel/setup.bash
+roslaunch kpp_ros_mujoco single_arm.launch
+```
+
+Untuk terminal kedua (`rostopic`, dan seterusnya): `docker exec -it kpp bash`.
 
 ## Menjalankan
 
@@ -134,7 +158,7 @@ rostopic info /arm1/joint_cmd
 rostopic echo /arm1/ee_position
 rostopic echo /arm1/ee_target
 rostopic echo -n 1 /arm1/joint_states
-rostopic hz /arm1/joint_states            # sekitar 60 Hz (mengikuti frame rate viewer; 100 Hz saat headless)
+rostopic hz /arm1/joint_states            # sekitar 30 Hz di Docker (mengikuti frame rate viewer); 100 Hz saat headless
 
 # Kontrol manual: pause trajectory, kirim perintah sendiri, lalu lanjutkan
 rostopic pub -1 /arm1/enable std_msgs/Bool "data: false"
