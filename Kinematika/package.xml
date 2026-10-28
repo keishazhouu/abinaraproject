@@ -1,0 +1,15 @@
+<package format="2">
+<name>kpp_ros_mujoco</name>
+<version>0.1.0</version>
+<description>
+DH parameters, transformation matrices, forward and inverse kinematics for Abinara.
+</description>
+<maintainer email="student@example.com">Abinara Project</maintainer>
+<license>MIT</license>
+<buildtool_depend>catkin</buildtool_depend>
+<depend>roscpp</depend>
+<depend>std_msgs</depend>
+<depend>sensor_msgs</depend>
+<depend>geometry_msgs</depend>
+<export/>
+</package>

@@ -1,0 +1,25 @@
+<launch>
+  <arg name="headless" default="false"/>
+  <arg name="target_x" default="0.375"/>
+  <arg name="target_y" default="0.0"/>
+  <arg name="target_z" default="0.625"/>
+  <arg name="tool_pitch" default="0.75"/>
+  <arg name="rate" default="10.0"/>
+
+  <node pkg="kpp_ros_mujoco" type="mujoco_sim_node" name="mujoco_sim" output="screen">
+    <param name="model_path" value="$(find kpp_ros_mujoco)/models/arm_final.xml"/>
+    <rosparam param="robots">[arm1]</rosparam>
+    <param name="use_prefix" value="false"/>
+    <param name="headless" value="$(arg headless)"/>
+  </node>
+
+  <group ns="arm1">
+    <node pkg="kpp_ros_mujoco" type="ik_command_node" name="ik_command" output="screen">
+      <param name="target_x" value="$(arg target_x)"/>
+      <param name="target_y" value="$(arg target_y)"/>
+      <param name="target_z" value="$(arg target_z)"/>
+      <param name="tool_pitch" value="$(arg tool_pitch)"/>
+      <param name="rate" value="$(arg rate)"/>
+    </node>
+  </group>
+</launch>
